@@ -150,7 +150,6 @@ footer b{color:var(--gold)}
 <body>
 </style>
 </head>
-<body>
 <button class="musik" id="btnMusik" type="button" aria-label="Nyalakan musik" title="Nyalakan musik">🔇</button>
 <audio id="lagu" src="musik/lagu.mp3" loop preload="auto"></audio>
 <header class="hero" id="home">
@@ -426,6 +425,50 @@ var PJ=[
   box.insertAdjacentHTML("beforeend",
     '<h3 class="judul">Penanggung Jawab Mata Pelajaran</h3><div class="pj">'+
     PJ.map(function(x){return '<div class="p"><span class="tag">PJ '+esc(x.mapel)+'</span>'+foto(x.foto,x.nama)+'<b>'+esc(x.nama)+'</b></div>'}).join("")+'</div>');
+})();
+</script>
+<script>
+/* ===== PENGUMUMAN LIBUR, edit di sini ===== */
+var LIBUR_MINGGUAN=[0,6];   // 0 = Minggu, 6 = Sabtu. Hapus angka 6 kalau hari Sabtu masuk sekolah
+var LIBUR_TANGGAL=[         // libur tanggal tertentu: tgl ditulis tahun-bulan-tanggal
+  {tgl:"2026-12-25", ket:"Contoh: tulis nama libur di sini"},
+  {tgl:"2026-12-31", ket:"Contoh: libur semester"}
+];
+var LIBUR_SEMUA=false;      // ganti jadi true untuk memaksa "hari ini libur" (misalnya libur dadakan)
+
+(function(){
+  try{
+    function pad(n){return ("0"+n).slice(-2)}
+    function kunci(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+    function cari(d){
+      var k=kunci(d);
+      for(var i=0;i<LIBUR_TANGGAL.length;i++){if(LIBUR_TANGGAL[i].tgl===k)return LIBUR_TANGGAL[i].ket||"Libur"}
+      if(LIBUR_MINGGUAN.indexOf(d.getDay())>-1)return "Libur akhir pekan";
+      return null;
+    }
+    var hariIni=new Date(), esok=new Date(hariIni.getTime()+864e5);
+    var ketIni=LIBUR_SEMUA?"Libur":cari(hariIni);
+    var ketEsok=cari(esok);
+    var kartu=document.querySelectorAll("#ringkasan .n");
+
+    if(ketIni){
+      document.getElementById("ringkasan").insertAdjacentHTML("afterend",'<div class="libur-bar">🎉 Hari ini libur: '+ketIni+'</div>');
+      ["guru","murid"].forEach(function(id){
+        var sec=document.getElementById(id); if(!sec)return;
+        var sub=sec.querySelector(".sub"); if(sub)sub.textContent="Hari ini libur, tidak ada presensi.";
+        var panel=sec.querySelector(".panel");
+        if(panel)panel.innerHTML='<div class="libur"><b>Hari ini libur</b><span>'+ketIni+'</span></div>';
+      });
+      if(kartu[0])kartu[0].textContent="Libur";
+      if(kartu[1])kartu[1].textContent="Libur";
+    }
+
+    if(ketEsok){
+      var tb=document.getElementById("jadwalBody");
+      if(tb)tb.innerHTML='<tr><td colspan="3"><b>Besok libur:</b> '+ketEsok+'</td></tr>';
+      if(kartu[2])kartu[2].textContent="Libur";
+    }
+  }catch(e){console.error("Bagian libur error:",e)}
 })();
 </script>
 </body>

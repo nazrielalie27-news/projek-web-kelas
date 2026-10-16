@@ -7,6 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+  font-family: 'Formula1';
+  src: url('Formula1.ttf');
+}
+
+.brand {
+  font-family: 'Formula1', sans-serif;
+}
 :root{--navy:#0b1f4d;--orange:#f59a23;--bg:#f5f9fc;--card:#fff;--text:#1b2a4a;--muted:#5d6b88;--line:#e3eaf3;--ok:#1a8f5a;--ok-bg:#e0f5ea;--warn-bg:#fff1d6;--warn:#9a6100;--bad-bg:#fde3e3;--bad:#b42323;--info-bg:#e1ecff;--info:#1f4fb3;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1430;--card:#12204a;--text:#e8eefc;--muted:#a3b2d6;--line:#233463;--ok-bg:#12382b;--ok:#6fe0a8;--warn-bg:#40300f;--warn:#ffcf7a;--bad-bg:#431a1f;--bad:#ff9a9a;--info-bg:#17326b;--info:#9fc2ff}}
@@ -126,6 +134,20 @@ footer b{color:var(--gold)}
 .slogan{margin:28px 0 0;text-align:center;font-size:clamp(26px,6vw,56px);font-weight:900;line-height:1.15;text-transform:uppercase;letter-spacing:.5px;color:var(--navy)}
 .slogan::after{content:"";display:block;width:80px;height:5px;background:var(--orange);margin:18px auto 0;border-radius:3px}
 @media (prefers-color-scheme:dark){.slogan{color:#fff}}
+@media (prefers-color-scheme:dark){.slogan{color:#fff}}
+
+@font-face {
+  font-family: 'Formula1';
+  src: url('Formula1.ttf');
+}
+
+.slogan, .brand {
+  font-family: 'Formula1', sans-serif !important;
+}
+
+</style>
+</head>
+<body>
 </style>
 </head>
 <body>

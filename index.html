@@ -496,5 +496,128 @@ var LIBUR_SEMUA=false;      // ganti jadi true untuk memaksa "hari ini libur" (m
   }catch(e){console.error("Bagian libur error:",e)}
 })();
 </script>
+<script>
+/* ===== PRESENSI OTOMATIS DARI GOOGLE SHEETS ===== */
+var CSV_GURU ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRIGqstDI_YE50Hz73oWRLwld7RIoWVPqeMhJ9TNcgyYAJ_FwMoeEm4EsQ70YAqm0a000AqEF_rY3Dj/pub?gid=1192387239&single=true&output=csv";
+var CSV_MURID="https://docs.google.com/spreadsheets/d/e/2PACX-1vTLe-gCc-Mg6SEW6b6gYdORp4BVBXzb2yRN_cpIMj-2FVzNcMpjwFq_IPTrrYMVg8pJMyFYI_MASHZi/pub?gid=1192690633&single=true&output=csv
+";
+
+(function(){
+  var HARI=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  var BULAN=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  var LAB={hadir:"Hadir",sakit:"Sakit",izin:"Izin",alpa:"Alpa",belum:"Belum masuk jam",dispensasi:"Dispensasi"};
+  function $(id){return document.getElementById(id)}
+  function pad(n){return ("0"+n).slice(-2)}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function norm(s){return String(s||"").toLowerCase().replace(/\s+/g," ").trim()}
+  function badge(s){return '<span class="badge '+s+'">'+LAB[s]+'</span>'}
+  function tglIndo(d){return HARI[d.getDay()]+", "+d.getDate()+" "+BULAN[d.getMonth()]+" "+d.getFullYear()}
+
+  // baca file CSV
+  function csv(t){
+    var r=[],row=[],c="",q=false;
+    for(var i=0;i<t.length;i++){
+      var ch=t[i];
+      if(q){ if(ch==='"'){ if(t[i+1]==='"'){c+='"';i++} else q=false } else c+=ch }
+      else if(ch==='"')q=true;
+      else if(ch===","){row.push(c);c=""}
+      else if(ch==="\n"){row.push(c);r.push(row);row=[];c=""}
+      else if(ch!=="\r")c+=ch;
+    }
+    if(c!==""||row.length){row.push(c);r.push(row)}
+    return r.slice(1); // buang baris judul
+  }
+  // ambil tanggal dari kolom Timestamp, jadi "tahun-bulan-tanggal"
+  function kunci(s){
+    s=String(s||"").trim();
+    var m=s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})/);
+    if(m)return m[3]+"-"+pad(m[2])+"-"+pad(m[1]);
+    m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(m)return m[1]+"-"+pad(m[2])+"-"+pad(m[3]);
+    return "";
+  }
+  // ubah tulisan status jadi kode
+  function status(s){
+    s=norm(s);
+    if(s.indexOf("dispen")>-1)return "dispensasi";
+    if(s.indexOf("sakit")>-1)return "sakit";
+    if(s.indexOf("izin")>-1)return "izin";
+    if(s.indexOf("alpa")>-1||s.indexOf("tanpa")>-1||s.indexOf("tidak hadir")>-1)return "alpa";
+    if(s.indexOf("hadir")>-1)return "hadir";
+    return "belum";
+  }
+  function ambil(url){return fetch(url,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()}).then(csv)}
+
+  function tampil(rowsGuru,rowsMurid){
+    var now=new Date(), hariKey=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate());
+    var kartu=document.querySelectorAll("#ringkasan .n");
+
+    // ---- GURU: jadwal hari ini + status dari Form ----
+    var jadwal=(DATA.jadwal&&DATA.jadwal[now.getDay()])||[];
+    var isi={}; // kunci: guru|mapel -> status (isian terakhir yang dipakai)
+    rowsGuru.forEach(function(r){
+      if(kunci(r[0])!==hariKey)return;
+      isi[norm(r[1])+"|"+norm(r[2])]=status(r[3]);
+    });
+    var daftar=jadwal.map(function(x){
+      var s=isi[norm(x[2])+"|"+norm(x[1])]||"belum";
+      return {jam:x[0],mapel:x[1],guru:x[2],status:s};
+    });
+    var hadir=daftar.filter(function(x){return x.status==="hadir"}).length;
+    var belum=daftar.filter(function(x){return x.status==="belum"}).length;
+    $("guruSub").textContent=tglIndo(now)+" — "+hadir+" dari "+daftar.length+" guru hadir"+(belum?" ("+belum+" belum masuk jam)":"");
+    $("guruBody").innerHTML=daftar.length?daftar.map(function(x){
+      return "<tr><td>"+esc(x.jam)+"</td><td>"+esc(x.mapel)+"</td><td>"+esc(x.guru)+"</td><td>"+badge(x.status)+"</td></tr>";
+    }).join(""):'<tr><td colspan="4">Tidak ada jadwal pelajaran hari ini.</td></tr>';
+    if(kartu[0])kartu[0].textContent=hadir+"/"+daftar.length;
+
+    // ---- MURID: yang tidak hadir + dispensasi ----
+    var tot=DATA.jumlahMurid||0, terakhir={};
+    rowsMurid.forEach(function(r){
+      if(kunci(r[0])!==hariKey)return;
+      terakhir[norm(r[1])]={nama:r[1],status:status(r[2]),dari:r[3],sampai:r[4],ket:r[5]};
+    });
+    var tidak=[],dispen=[],hit={sakit:0,izin:0,alpa:0};
+    Object.keys(terakhir).forEach(function(k){
+      var x=terakhir[k];
+      if(x.status==="dispensasi")dispen.push(x);
+      else if(hit[x.status]!==undefined){hit[x.status]++;tidak.push(x)}
+    });
+    var mHadir=tot-tidak.length;
+    $("muridSub").textContent=tglIndo(now)+" — "+mHadir+" dari "+tot+" murid hadir";
+    $("muridStats").innerHTML=[["hadir",mHadir],["sakit",hit.sakit],["izin",hit.izin],["alpa",hit.alpa]].map(function(a){
+      return '<div class="stat '+a[0]+'"><b>'+a[1]+'</b><span>'+LAB[a[0]]+'</span></div>';
+    }).join("");
+    $("muridBar").style.width=(tot?mHadir/tot*100:0)+"%";
+    var html=tidak.length?"<h3>Murid yang tidak hadir</h3><ul>"+tidak.map(function(x){
+      return "<li>"+esc(x.nama)+" "+badge(x.status)+"</li>";
+    }).join("")+"</ul>":"<h3>Semua murid hadir hari ini.</h3>";
+    if(dispen.length){
+      html+="<h3>Murid dispensasi</h3><ul>"+dispen.map(function(x){
+        var jam=(x.dari&&x.sampai)?" jam ke-"+esc(x.dari)+" s/d "+esc(x.sampai):"";
+        return "<li>"+esc(x.nama)+' <span class="badge dispensasi">Dispensasi</span>'+jam+(x.ket?" ("+esc(x.ket)+")":"")+"</li>";
+      }).join("")+"</ul>";
+    }
+    $("muridAbsen").innerHTML=html;
+    if(kartu[1])kartu[1].textContent=mHadir+"/"+tot;
+  }
+
+  function muat(){
+    if(document.querySelector(".libur-bar"))return; // hari libur: jangan ditimpa
+    Promise.all([ambil(CSV_GURU),ambil(CSV_MURID)]).then(function(h){
+      try{tampil(h[0],h[1])}catch(e){console.error("Bagian presensi otomatis error:",e)}
+    }).catch(function(e){
+      console.error("Data presensi gagal dimuat:",e);
+      var a=$("guruSub"),b=$("muridSub");
+      if(a)a.textContent="Data presensi belum bisa dimuat. Coba muat ulang halaman.";
+      if(b)b.textContent="Data presensi belum bisa dimuat. Coba muat ulang halaman.";
+    });
+  }
+  if(CSV_GURU.indexOf("http")===0&&CSV_MURID.indexOf("http")===0){
+    muat();
+    setInterval(muat,60000); // perbarui tiap 1 menit
+  }
+})();
+</script>
 </body>
 </html>

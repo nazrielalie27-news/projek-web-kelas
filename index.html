@@ -158,7 +158,7 @@ footer b{color:var(--gold)}
 </head>
 <body>
 <button class="musik" id="btnMusik" type="button" aria-label="Nyalakan musik" title="Nyalakan musik">🔇</button>
-<audio id="lagu" src="musik/lagu.mp3" loop preload="auto"></audio>
+<audio id="lagu" src="musik/lagu1.mp3" preload="auto"></audio>
 
 <header class="hero" id="home">
   <div class="wrap">
@@ -593,27 +593,54 @@ if(ketEsok){
 </script>
 
 <script>
-/* ===== MUSIK LATAR ===== */
+/* ===== MUSIK LATAR (PLAYLIST 5 LAGU - ACAK SAAT MASUK) ===== */
 (function(){
-  var lagu=document.getElementById("lagu"), btn=document.getElementById("btnMusik"), mati=false;
-  lagu.volume=0.4;
-  function tampil(){
-    var main=!lagu.paused;
-    btn.textContent=main?"🔊":"🔇";
-    btn.title=main?"Matikan musik":"Nyalakan musik";
-    btn.setAttribute("aria-label",btn.title);
+  var PLAYLIST = [
+    "musik/lagu1.mp3",
+    "musik/lagu2.mp3",
+    "musik/lagu3.mp3",
+    "musik/lagu4.mp3",
+    "musik/lagu5.mp3"
+  ];
+
+  // Pilih lagu awal secara acak dan pastikan berbeda dari kunjungan sebelumnya
+  var terakhir = parseInt(localStorage.getItem("laguTerakhir"), 10);
+  var idx = Math.floor(Math.random() * PLAYLIST.length);
+  if (PLAYLIST.length > 1 && idx === terakhir) {
+    idx = (idx + 1 + Math.floor(Math.random() * (PLAYLIST.length - 1))) % PLAYLIST.length;
   }
+  localStorage.setItem("laguTerakhir", idx);
+
+  var lagu = document.getElementById("lagu"), btn = document.getElementById("btnMusik"), mati = false;
+  lagu.volume = 0.4;
+  lagu.src = PLAYLIST[idx];
+
+  function tampil(){
+    var main = !lagu.paused;
+    btn.textContent = main ? "🔊" : "🔇";
+    btn.title = main ? "Matikan musik (Lagu " + (idx + 1) + "/" + PLAYLIST.length + ")" : "Nyalakan musik (Lagu " + (idx + 1) + "/" + PLAYLIST.length + ")";
+    btn.setAttribute("aria-label", btn.title);
+  }
+
   function mulai(e){
-    if(mati||(e&&btn.contains(e.target)))return;
+    if(mati || (e && btn.contains(e.target))) return;
     lagu.play().then(tampil).catch(function(){});
   }
-  ["pointerdown","keydown"].forEach(function(e){document.addEventListener(e,mulai,{once:true})});
-  btn.addEventListener("click",function(){
-    if(lagu.paused){mati=false;lagu.play().then(tampil).catch(tampil)}
-    else{mati=true;lagu.pause();tampil()}
+
+  // Lanjut berurutan ke lagu berikutnya dan berputar terus 1-5
+  lagu.addEventListener("ended", function(){
+    idx = (idx + 1) % PLAYLIST.length;
+    lagu.src = PLAYLIST[idx];
+    lagu.play().then(tampil).catch(tampil);
   });
-  lagu.addEventListener("play",tampil);
-  lagu.addEventListener("pause",tampil);
+
+  ["pointerdown", "keydown"].forEach(function(e){ document.addEventListener(e, mulai, {once: true}) });
+  btn.addEventListener("click", function(){
+    if(lagu.paused){ mati = false; lagu.play().then(tampil).catch(tampil); }
+    else { mati = true; lagu.pause(); tampil(); }
+  });
+  lagu.addEventListener("play", tampil);
+  lagu.addEventListener("pause", tampil);
   tampil();
 })();
 

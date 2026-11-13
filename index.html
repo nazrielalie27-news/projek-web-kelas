@@ -175,6 +175,9 @@ footer b{color:var(--gold)}
 .maint-est b{color:var(--gold);display:block;font-size:12px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
 .maint-musik{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;border:0;border-radius:30px;padding:12px 24px;font-weight:900;font-size:13px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;box-shadow:0 6px 20px rgba(212,0,0,.4)}
 .maint-musik:hover{filter:brightness(1.1)}
+.maint-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.maint-refresh{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:12px 22px;font-weight:900;font-size:13px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.maint-refresh:hover{background:rgba(255,255,255,.22)}
 .maint-foot{margin-top:20px;font-size:12px;color:#8e9ab5}
 </style>
 </head>
@@ -189,10 +192,10 @@ footer b{color:var(--gold)}
     <div class="maint-est">
       <b>Estimasi Selesai</b>
       <span id="maintWaktu">Segera diinformasikan kembali</span>
+    <div class="maint-actions">
+      <button type="button" class="maint-musik" id="btnMaintMusik">🔇 Putar Musik Pengiring</button>
+      <button type="button" class="maint-refresh" onclick="location.reload()">🔄 Muat Ulang</button>
     </div>
-    <button type="button" class="maint-musik" id="btnMaintMusik">🔇 Putar Musik Pengiring</button>
-    <div class="maint-foot">Divisi Hubungan Masyarakat &middot; Kelas X F SMAN 3 Sukabumi</div>
-  </div>
 </div>
 <audio id="laguMaint" loop preload="auto"></audio>
 <button class="musik" id="btnMusik" type="button" aria-label="Nyalakan musik" title="Nyalakan musik">🔇</button>

@@ -7,6 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
+/* ===== TOMBOL REFRESH & AKTIFKAN PULL-TO-REFRESH HP ===== */
+html, body { overscroll-behavior-y: auto !important; }
+.btn-refresh{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:66px;z-index:50;width:46px;height:46px;border-radius:50%;border:0;background:var(--card);color:var(--text);font-size:18px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:grid;place-items:center;transition:transform .4s ease}
+.btn-refresh:hover{filter:brightness(1.08)}
+.btn-refresh.putar{transform:rotate(360deg)}
+@media(max-width:1100px){.topbar{padding-right:112px}}
+
 /* ===== PENGUMUMAN LIBUR ===== */
 .libur-bar{margin:24px 0 0;background:var(--orange);color:#fff;border-radius:12px;padding:16px 20px;text-align:center;font-weight:900;font-size:clamp(16px,3vw,22px)}
 .libur{padding:36px 20px;text-align:center}
@@ -189,6 +196,7 @@ footer b{color:var(--gold)}
 </div>
 <audio id="laguMaint" loop preload="auto"></audio>
 <button class="musik" id="btnMusik" type="button" aria-label="Nyalakan musik" title="Nyalakan musik">🔇</button>
+<button class="btn-refresh" id="btnRefresh" type="button" aria-label="Muat ulang halaman" title="Muat ulang halaman">🔄</button>
 <audio id="lagu" src="musik/lagu1.mp3" preload="auto"></audio>
 
 <header class="hero" id="home">
@@ -833,6 +841,17 @@ var MAINT_TAB_NAME = "Sheet1";
 
   // Berjalan saat tab ditutup atau keluar dari halaman
   window.addEventListener("pagehide", jedaSemuaLagu);
+})();
+/* ===== FUNGSI TOMBOL REFRESH ===== */
+(function(){
+  var btnRef = document.getElementById("btnRefresh");
+  if (!btnRef) return;
+  btnRef.addEventListener("click", function(){
+    btnRef.classList.add("putar");
+    setTimeout(function(){
+      location.reload();
+    }, 250);
+  });
 })();
 </script>
 </body>

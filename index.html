@@ -809,6 +809,31 @@ var MAINT_TAB_NAME = "Sheet1";
   cekMaintenance();
   setInterval(cekMaintenance, 30000);
 })();
+/* ============================================================
+   HENTIKAN LAGU OTOMATIS SAAT KELUAR / PINDAH TAB / KUNCI LAYAR HP
+   ============================================================ */
+(function(){
+  function jedaSemuaLagu(){
+    var l1 = document.getElementById("lagu");
+    var l2 = document.getElementById("laguMaint");
+    if (l1 && !l1.paused) l1.pause();
+    if (l2 && !l2.paused) l2.pause();
+
+    // Perbarui tampilan tombol lagu maintenance jika sedang tampil
+    var btnM = document.getElementById("btnMaintMusik");
+    if (btnM) btnM.textContent = "🔇 Putar Musik Pengiring";
+  }
+
+  // Berjalan saat user pindah tab, minimize browser, menekan tombol Home HP, atau kunci layar
+  document.addEventListener("visibilitychange", function(){
+    if (document.hidden) {
+      jedaSemuaLagu();
+    }
+  });
+
+  // Berjalan saat tab ditutup atau keluar dari halaman
+  window.addEventListener("pagehide", jedaSemuaLagu);
+})();
 </script>
 </body>
 </html>

@@ -236,11 +236,11 @@ footer b{color:var(--gold)}
     <div class="maint-foot">Divisi Hubungan Masyarakat &middot; Kelas X F SMAN 3 Sukabumi</div>
   </div>
 </div>
-<audio id="laguMaint" loop preload="auto"></audio>
+<audio id="laguMaint" loop preload="none"></audio>
 
 <button class="btn-refresh" id="btnRefresh" type="button" aria-label="Muat ulang halaman" title="Muat ulang halaman">🔄</button>
 <button class="musik" id="btnMusik" type="button" aria-label="Nyalakan musik" title="Nyalakan musik">🔇</button>
-<audio id="lagu" src="musik/lagu1.mp3" preload="auto"></audio>
+<audio id="lagu" preload="metadata"></audio>
 
 <header class="hero" id="home">
   <div class="wrap">
@@ -544,7 +544,7 @@ $("jadwalBody").innerHTML=jadwalBesok.length?jadwalBesok.map(function(r){
 $("strukturBox").innerHTML=(DATA.struktur||[]).map(function(d){
   return '<div class="divisi"><h3>'+esc(d.divisi)+'</h3><div class="orang">'+d.orang.map(function(o){
     var ini=o.nama.split(" ").slice(0,2).map(function(w){return w[0]}).join("").toUpperCase();
-    return '<div class="p"><div class="foto">'+(o.foto?'<img src="'+esc(o.foto)+'" alt="" onerror="this.parentNode.textContent=\''+ini+'\'">':ini)+'</div><b>'+esc(o.nama)+'</b><span>'+esc(o.jabatan)+'</span></div>';
+    return '<div class="p"><div class="foto">'+(o.foto?'<img src="'+esc(o.foto)+'" alt="" loading="lazy" onerror="this.parentNode.textContent=\''+ini+'\'">':ini)+'</div><b>'+esc(o.nama)+'</b><span>'+esc(o.jabatan)+'</span></div>';
   }).join("")+'</div></div>';
 }).join("");
 
@@ -728,6 +728,8 @@ if(ketEsok){
   var lagu = document.getElementById("lagu"), btn = document.getElementById("btnMusik"), mati = false;
   lagu.volume = 0.4;
   lagu.src = PLAYLIST[idx];
+  lagu.load();
+  
 
   function tampil(){
     var main = !lagu.paused;
@@ -787,7 +789,7 @@ var PJ=[
   var box=document.getElementById("strukturBox"); if(!box)return;
   function foto(src,nama){
     var ini=nama.split(" ").slice(0,2).map(function(w){return w[0]}).join("").toUpperCase();
-    return '<div class="foto">'+(src?'<img src="'+esc(src)+'" alt="Foto '+esc(nama)+'" onerror="this.parentNode.textContent=\''+ini+'\'">':ini)+'</div>';
+    return '<div class="foto">'+(src?'<img src="'+esc(src)+'" alt="Foto '+esc(nama)+'" loading="lazy" onerror="this.parentNode.textContent=\''+ini+'\'">':ini)+'</div>';
   }
   box.insertAdjacentHTML("afterbegin",
     '<div class="wali">'+foto(WALI.foto,WALI.nama)+'<div><div class="lbl">Wali Kelas</div><h4>'+esc(WALI.nama)+'</h4><div class="jab">'+esc(WALI.jabatan)+'</div><p>'+esc(WALI.deskripsi)+'</p></div></div>');

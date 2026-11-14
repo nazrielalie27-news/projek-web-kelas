@@ -114,13 +114,18 @@ footer b{color:var(--orange)}
 .btn-refresh.putar{transform:rotate(360deg)}
 @media(max-width:1100px){.topbar{padding-right:112px}}
 
-/* ===== TEMA FERRARI ===== */
+/* ===== TEMA FERRARI (GRADASI PENUH SAMPAI BAWAH) ===== */
 :root{--orange:#D40000;--navy:#0d0d0d;--gold:#FFF200}
-.hero{background:linear-gradient(180deg,#D40000 0%,#8a0000 45%,#000 100%)}
+body{background:linear-gradient(180deg,#D40000 0%,#8a0000 14%,#1f0303 38%,#0d0d0d 72%,#000000 100%) !important;min-height:100vh}
+.hero{background:transparent !important}
+section h2,.slogan{color:#ffffff !important}
+section .sub{color:#e2e8f0 !important}
+.divisi h3,.judul{color:#ffffff !important}
 .topbar b,.heroText small{color:var(--gold)}
 .btn{background:var(--gold);color:#000}
 .sum .more{color:#fff}
 .musik{background:var(--gold);color:#000}
+footer{background:rgba(0,0,0,.65) !important;border-top:1px solid rgba(255,255,255,.1)}
 footer b{color:var(--gold)}
 
 /* ===== WALI KELAS ===== */
@@ -177,6 +182,18 @@ footer b{color:var(--gold)}
 .maint-refresh{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:12px 22px;font-weight:900;font-size:13px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:background .2s}
 .maint-refresh:hover{background:rgba(255,255,255,.22)}
 .maint-foot{margin-top:20px;font-size:12px;color:#8e9ab5}
+/* ===== ANIMASI FADE-IN SAAT SCROLL ===== */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
+.reveal.muncul{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+/* ===== 2 FOTO BERDAMPINGAN DI KARTU PJ ===== */
+.pj .foto img{object-position:center 20%}
+.pj .foto-ganda{display:flex;justify-content:center;align-items:center;gap:10px;min-height:84px;margin:0 auto 10px}
+.pj .foto-ganda .foto{width:74px;height:74px;font-size:22px;margin:0;flex:none}
+@media(max-width:720px){
+  .pj .foto-ganda{gap:6px}
+  .pj .foto-ganda .foto{width:60px;height:60px;font-size:18px}
+}
 </style>
 </head>
 <body>
@@ -699,7 +716,7 @@ var PJ=[
   {mapel:"PPKn",         nama:"Evan",  foto:"PKN.jpg"},
   {mapel:"B. Indonesia", nama:"Sasabila",  foto:"Indonesia.jpg"},
   {mapel:"Matematika",   nama:"Rayhan Byantara & Jeremiah",  foto:"MTK.jpg"},
-  {mapel:"B. Inggris",   nama:"Balqis Shafira",  foto:"Inggris.jpg"},
+  {mapel:"B. Inggris",   nama:["Balqis Shafira", "Rasya"], foto:["Inggris.jpg", "Inggris2.jpg"]},
   {mapel:"Fisika",       nama:"Khansa Fathia",  foto:"Fisika.jpg"},
   {mapel:"Kimia",        nama:"Dzaky",  foto:"Kimia.jpg"},
   {mapel:"Biologi",      nama:"Sadra & Valene",  foto:"Biologi.jpg"},
@@ -723,7 +740,16 @@ var PJ=[
     '<div class="wali">'+foto(WALI.foto,WALI.nama)+'<div><div class="lbl">Wali Kelas</div><h4>'+esc(WALI.nama)+'</h4><div class="jab">'+esc(WALI.jabatan)+'</div><p>'+esc(WALI.deskripsi)+'</p></div></div>');
   box.insertAdjacentHTML("beforeend",
     '<h3 class="judul">Penanggung Jawab Mata Pelajaran</h3><div class="pj">'+
-    PJ.map(function(x){return '<div class="p"><span class="tag">PJ '+esc(x.mapel)+'</span>'+foto(x.foto,x.nama)+'<b>'+esc(x.nama)+'</b></div>'}).join("")+'</div>');
+    PJ.map(function(x){
+      var daftarFoto = Array.isArray(x.foto) ? x.foto : [x.foto];
+      var daftarNama = Array.isArray(x.nama) ? x.nama : [x.nama];
+      var htmlFoto = daftarFoto.length > 1
+        ? '<div class="foto-ganda">' + daftarFoto.map(function(f, idx){ return foto(f, daftarNama[idx] || daftarNama[0]); }).join("") + '</div>'
+        : foto(daftarFoto[0], daftarNama[0]);
+      var teksNama = daftarNama.join(" & ");
+      return '<div class="p"><span class="tag">PJ '+esc(x.mapel)+'</span>'+htmlFoto+'<b>'+esc(teksNama)+'</b></div>';
+    }).join("")+'</div>');
+    
 })();
 
 /* ============================================================
@@ -855,6 +881,35 @@ var MAINT_TAB_NAME = "Sheet1";
     setTimeout(function(){
       location.reload();
     }, 250);
+  });
+})();
+/* ===== ANIMASI FADE-IN OTOMATIS SAAT GULIR LAYAR ===== */
+(function(){
+  // Pilih semua elemen utama: kartu ringkasan, setiap section, panel, wali kelas, divisi, kartu pengurus, & foto bersama
+  var targetSelector = "#ringkasan a, main section, .panel, .laporan, .wali, .divisi, .pj .p, .bersama, .slogan";
+  var elemen = document.querySelectorAll(targetSelector);
+
+  if (!("IntersectionObserver" in window)) return;
+
+  var observer = new IntersectionObserver(function(entries, obs){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) {
+        entry.target.classList.add("muncul");
+        obs.unobserve(entry.target); // Animasi cukup berjalan 1x saat elemen mulai terlihat
+      }
+    });
+  }, {
+    threshold: 0.12, // Mulai muncul saat 12% bagian elemen masuk ke layar
+    rootMargin: "0px 0px -30px 0px"
+  });
+
+  elemen.forEach(function(el, i){
+    el.classList.add("reveal");
+    // Beri sedikit jeda berurutan untuk kartu-kartu yang sejajar
+    if (el.matches("#ringkasan a, .pj .p")) {
+      el.style.transitionDelay = ((i % 4) * 0.08) + "s";
+    }
+    observer.observe(el);
   });
 })();
 </script>

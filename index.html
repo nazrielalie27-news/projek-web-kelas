@@ -214,6 +214,11 @@ footer b{color:var(--gold)}
 .sosmed-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease}
 .sosmed-btn svg{width:22px;height:22px;fill:currentColor}
 .sosmed-btn:hover{transform:translateY(-4px);background:var(--orange);border-color:var(--gold);color:#fff;box-shadow:0 8px 20px rgba(212,0,0,.45)}
+
+/* ===== LAYAR PENGECEKAN AWAL (ANTI BOCOR SAAT MAINTENANCE) ===== */
+.init-loader{position:fixed;inset:0;z-index:9998;background:linear-gradient(170deg,#0d0d0d 0,#1a0000 55%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;font-family:Lato,system-ui,sans-serif}
+.init-spinner{width:42px;height:42px;border:4px solid rgba(255,255,255,.15);border-top-color:#D40000;border-right-color:#FFF200;border-radius:50%;animation:initSpin .75s linear infinite}
+@keyframes initSpin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -236,6 +241,40 @@ footer b{color:var(--gold)}
     <div class="maint-foot">Divisi Hubungan Masyarakat &middot; Kelas X F SMAN 3 Sukabumi</div>
   </div>
 </div>
+
+<!-- PENAHAN LAYAR SEBELUM STATUS MAINTENANCE DITERIMA -->
+<div class="init-loader" id="initLoader" aria-hidden="true">
+  <div class="init-spinner"></div>
+  <span style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#d0d7e8;font-weight:700">Memuat Kelas X F...</span>
+</div>
+<script>
+var ADMIN_KODE = "xf2026";
+(function(){
+  var loader = document.getElementById("initLoader");
+  var ov = document.getElementById("maintOverlay");
+  var isAdm = false;
+  try {
+    var m = window.location.href.match(/[?&#]admin=([^&#]+)/i);
+    if (m && decodeURIComponent(m[1]).trim().toLowerCase() === ADMIN_KODE.toLowerCase()) isAdm = true;
+    if ((localStorage.getItem("adminBypassMaint") || "").toLowerCase() === ADMIN_KODE.toLowerCase()) isAdm = true;
+  } catch(e){}
+
+  // Jika Admin, langsung buka tanpa menunggu
+  if (isAdm) {
+    if (loader) loader.style.display = "none";
+    return;
+  }
+
+  // Jika kunjungan sebelumnya berstatus Maintenance TRUE, langsung tampilkan layar maintenance 0 detik
+  try {
+    if (localStorage.getItem("lastMaintState") === "TRUE") {
+      if (ov) ov.classList.add("aktif");
+      if (loader) loader.style.display = "none";
+    }
+  } catch(e){}
+})();
+</script>
+
 <audio id="laguMaint" loop preload="none"></audio>
 
 <button class="btn-refresh" id="btnRefresh" type="button" aria-label="Muat ulang halaman" title="Muat ulang halaman">🔄</button>
@@ -896,6 +935,11 @@ var ADMIN_KODE     = "27022010"; // Ganti kode rahasia ini sesuai keinginanmu
     }
   });
 
+  function tutupLoaderAwal(){
+    var loader = document.getElementById("initLoader");
+    if (loader) loader.style.display = "none";
+  }
+
   function terapkanMaintenance(data){
     dataTerakhir = data;
     var aktifRaw = String(data[0] || "").trim().toUpperCase();
@@ -904,10 +948,12 @@ var ADMIN_KODE     = "27022010"; // Ganti kode rahasia ini sesuai keinginanmu
     var btnUtama = document.getElementById("btnMusik");
     var btnRef = document.getElementById("btnRefresh");
 
+    try { localStorage.setItem("lastMaintState", isAktif ? "TRUE" : "FALSE"); } catch(e){}
+    tutupLoaderAwal();
+
     if (isAktif) {
       sudahAktif = true;
 
-      // Jika dibuka di perangkat Admin, sembunyikan layar maintenance & tampilkan badge kecil
       if (isAdmin()) {
         ov.classList.remove("aktif");
         laguM.pause();
@@ -917,7 +963,6 @@ var ADMIN_KODE     = "27022010"; // Ganti kode rahasia ini sesuai keinginanmu
         return;
       }
 
-      // Jika dibuka oleh pengunjung/siswa biasa
       badgeAdmin.style.display = "none";
       ov.classList.add("aktif");
 
@@ -957,18 +1002,28 @@ var ADMIN_KODE     = "27022010"; // Ganti kode rahasia ini sesuai keinginanmu
       script.remove();
       try {
         var row = res.table.rows[0];
-        if (!row) return;
+        if (!row) { tutupLoaderAwal(); return; }
         var cols = row.c.map(function(cell){
           if (!cell) return "";
           return cell.f || String(cell.v !== null ? cell.v : "");
         });
         terapkanMaintenance(cols);
-      } catch(e){ console.error("Error baca sheet MAINTENANCE:", e); }
+      } catch(e){
+        console.error("Error baca sheet MAINTENANCE:", e);
+        tutupLoaderAwal();
+      }
     };
-    script.onerror = function(){ delete window[cbName]; script.remove(); };
+    script.onerror = function(){
+      delete window[cbName];
+      script.remove();
+      tutupLoaderAwal();
+    };
     script.src = "https://docs.google.com/spreadsheets/d/" + MAINT_SHEET_ID + "/gviz/tq?sheet=" + encodeURIComponent(MAINT_TAB_NAME) + "&headers=1&tqx=out:json;responseHandler:" + cbName + "&_t=" + Date.now();
     document.body.appendChild(script);
   }
+
+  // Batas tunggu maksimal 4 detik agar web tidak macet jika koneksi Google Sheets terganggu
+  setTimeout(tutupLoaderAwal, 4000);
 
   cekMaintenance();
   setInterval(cekMaintenance, 30000);

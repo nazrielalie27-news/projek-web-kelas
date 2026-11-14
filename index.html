@@ -206,6 +206,14 @@ footer b{color:var(--gold)}
 .halaman-view.aktif{display:block}
 @keyframes munculHalaman{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .profil-top{margin-top:-70px;position:relative;z-index:2}
+
+/* ===== SOSIAL MEDIA DI KEDUA HALAMAN ===== */
+.sosmed-box{margin:48px 0 8px;text-align:center}
+.sosmed-label{font-size:13px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;color:#e2e8f0;margin:0 0 16px}
+.sosmed-list{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
+.sosmed-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease}
+.sosmed-btn svg{width:22px;height:22px;fill:currentColor}
+.sosmed-btn:hover{transform:translateY(-4px);background:var(--orange);border-color:var(--gold);color:#fff;box-shadow:0 8px 20px rgba(212,0,0,.45)}
 </style>
 </head>
 <body>
@@ -330,6 +338,29 @@ footer b{color:var(--gold)}
       </figure>
       <p class="slogan">#WERACEASONE</p>
     </section>
+  </div>
+
+  <!-- TAMPIL OTOMATIS DI KEDUA HALAMAN (PRESENSI & PROFIL) -->
+  <div class="sosmed-box">
+    <p class="sosmed-label">Follow Us on Social Media</p>
+    <div class="sosmed-list">
+      <!-- TikTok -->
+      <a class="sosmed-btn" href="https://www.tiktok.com/@x.6fantasticlass" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+      </a>
+      <!-- Instagram -->
+      <a class="sosmed-btn" href="https://www.instagram.com/forzaverse_?utm_source=qr&vrfl=ZmZpMjNldnU3cjY%3D" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+      </a>
+      <!-- YouTube -->
+      <a class="sosmed-btn" href="https://www.youtube.com/@X-ForzaVerse" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+      <!-- WhatsApp Channel -->
+      <a class="sosmed-btn" href="https://www.whatsapp.com/channel/0029Vb9QIPiHgZWVJEgcJX1p" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Channel" title="WhatsApp Channel">
+        <svg viewBox="0 0 24 24"><path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.458 3.475 1.328 4.988L2 22l5.184-1.359a9.927 9.927 0 0 0 4.847 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.937 9.937 0 0 0 19.08 4.92 9.914 9.914 0 0 0 12.031 2zm5.818 14.25c-.244.688-1.418 1.316-1.969 1.398-.504.075-1.141.107-1.841-.116-.424-.135-.969-.316-1.666-.617-2.931-1.266-4.845-4.219-4.991-4.414-.146-.195-1.191-1.584-1.191-3.021 0-1.437.752-2.144 1.019-2.437.267-.293.583-.366.778-.366.195 0 .39.002.56.01.18.009.421-.068.659.503.244.586.829 2.023.902 2.169.073.146.122.317.024.512-.098.195-.146.317-.293.488-.146.171-.307.381-.439.512-.146.146-.299.304-.128.597.171.293.758 1.251 1.628 2.027 1.119.998 2.062 1.307 2.355 1.453.293.146.464.122.635-.073.171-.195.732-.854.927-1.147.195-.293.39-.244.659-.146.268.098 1.708.805 2 .952.293.146.488.22.561.342.073.122.073.707-.171 1.395z"/></svg>
+      </a>
+    </div>
   </div>
 </main>
 
@@ -775,23 +806,76 @@ var PJ=[
 
 /* ============================================================
    PENGATURAN MODE MAINTENANCE OTOMATIS DARI GOOGLE SHEETS
-   Cukup ubah sel A2 di tab "Sheet1" (TRUE / FALSE) lewat HP!
+   + BYPASS KHUSUS PERANGKAT ADMIN
    ============================================================ */
 var MAINT_SHEET_ID = "1S69yY3pqVz6akkCPongGv6dJmjZEESgMLnCHLKobaqo";
 var MAINT_TAB_NAME = "Sheet1";
+var ADMIN_KODE     = "xf2026"; // Ganti kode rahasia ini sesuai keinginanmu
 
 (function(){
   var laguM = document.getElementById("laguMaint");
   var btnM = document.getElementById("btnMaintMusik");
   var dimatikanManual = false;
   var sudahAktif = false;
+  var dataTerakhir = null;
+
+  // Cek parameter URL (?admin=xf2026 untuk masuk, ?admin=off untuk keluar)
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var qAdmin = params.get("admin");
+    if (qAdmin === ADMIN_KODE) {
+      localStorage.setItem("adminBypassMaint", ADMIN_KODE);
+      window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+    } else if (qAdmin === "off") {
+      localStorage.removeItem("adminBypassMaint");
+      window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+    }
+  } catch(e){}
+
+  function isAdmin(){
+    return localStorage.getItem("adminBypassMaint") === ADMIN_KODE;
+  }
+
+  // Buat indikator kecil di pojok kiri bawah saat Admin menembus Maintenance
+  var badgeAdmin = document.createElement("div");
+  badgeAdmin.id = "adminMaintBadge";
+  badgeAdmin.style.cssText = "position:fixed;bottom:14px;left:14px;z-index:9998;background:rgba(13,13,13,.92);color:#fff;border:1px solid #FFF200;border-radius:30px;padding:8px 14px;font-size:12px;display:none;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.45)";
+  badgeAdmin.innerHTML = '<span>🔓 <b>Mode Admin</b> (Web sedang Maintenance untuk umum)</span><button type="button" id="btnKeluarAdmin" style="background:#D40000;color:#fff;border:0;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">Keluar</button>';
+  document.body.appendChild(badgeAdmin);
+
+  document.getElementById("btnKeluarAdmin").addEventListener("click", function(){
+    localStorage.removeItem("adminBypassMaint");
+    if (dataTerakhir) terapkanMaintenance(dataTerakhir);
+  });
+
+  // Jalan pintas rahasia: ketuk ikon 🛠️ 5x di layar maintenance untuk masukkan kode admin
+  var tapCount = 0, tapTimer = null;
+  var maintIcon = document.querySelector("#maintOverlay .maint-icon");
+  if (maintIcon) {
+    maintIcon.style.cursor = "pointer";
+    maintIcon.addEventListener("click", function(){
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function(){ tapCount = 0; }, 2000);
+      if (tapCount >= 7) {
+        tapCount = 0;
+        var input = prompt("Masukkan kode akses admin:");
+        if (input === ADMIN_KODE) {
+          localStorage.setItem("adminBypassMaint", ADMIN_KODE);
+          if (dataTerakhir) terapkanMaintenance(dataTerakhir);
+        } else if (input !== null) {
+          alert("Kode salah.");
+        }
+      }
+    });
+  }
 
   function updateBtn(){
     btnM.textContent = laguM.paused ? "🔇 Putar Musik Pengiring" : "🔊 Matikan Musik Pengiring";
   }
 
   function autoPlayMaint(e){
-    if (!sudahAktif || dimatikanManual || (e && btnM.contains(e.target))) return;
+    if (!sudahAktif || isAdmin() || dimatikanManual || (e && btnM.contains(e.target))) return;
     laguM.play().then(updateBtn).catch(function(){});
   }
 
@@ -811,12 +895,28 @@ var MAINT_TAB_NAME = "Sheet1";
   });
 
   function terapkanMaintenance(data){
+    dataTerakhir = data;
     var aktifRaw = String(data[0] || "").trim().toUpperCase();
     var isAktif = (aktifRaw === "TRUE" || aktifRaw === "YA" || aktifRaw === "1");
     var ov = document.getElementById("maintOverlay");
+    var btnUtama = document.getElementById("btnMusik");
+    var btnRef = document.getElementById("btnRefresh");
 
     if (isAktif) {
       sudahAktif = true;
+
+      // Jika dibuka di perangkat Admin, sembunyikan layar maintenance & tampilkan badge kecil
+      if (isAdmin()) {
+        ov.classList.remove("aktif");
+        laguM.pause();
+        badgeAdmin.style.display = "flex";
+        if (btnUtama) btnUtama.style.display = "";
+        if (btnRef) btnRef.style.display = "grid";
+        return;
+      }
+
+      // Jika dibuka oleh pengunjung/siswa biasa
+      badgeAdmin.style.display = "none";
       ov.classList.add("aktif");
 
       document.getElementById("maintJudul").textContent = data[1] || "Website Sedang Dalam Perbaikan";
@@ -824,8 +924,6 @@ var MAINT_TAB_NAME = "Sheet1";
       document.getElementById("maintWaktu").textContent = data[3] || "Segera diinformasikan kembali";
 
       var laguUtama = document.getElementById("lagu");
-      var btnUtama = document.getElementById("btnMusik");
-      var btnRef = document.getElementById("btnRefresh");
       if (laguUtama) { laguUtama.pause(); laguUtama.src = ""; }
       if (btnUtama) btnUtama.style.display = "none";
       if (btnRef) btnRef.style.display = "none";
@@ -839,14 +937,13 @@ var MAINT_TAB_NAME = "Sheet1";
       if (!dimatikanManual && laguM.paused) {
         laguM.play().then(updateBtn).catch(updateBtn);
       }
-    } else if (sudahAktif) {
+    } else {
       sudahAktif = false;
       ov.classList.remove("aktif");
+      badgeAdmin.style.display = "none";
       laguM.pause();
-      var btnUtama2 = document.getElementById("btnMusik");
-      var btnRef2 = document.getElementById("btnRefresh");
-      if (btnUtama2) btnUtama2.style.display = "";
-      if (btnRef2) btnRef2.style.display = "grid";
+      if (btnUtama) btnUtama.style.display = "";
+      if (btnRef) btnRef.style.display = "grid";
     }
   }
 
@@ -942,6 +1039,12 @@ var MAINT_TAB_NAME = "Sheet1";
   var heroDesc = document.getElementById("heroDesc");
   var heroBtn = document.getElementById("heroBtn");
 
+  // Pastikan tombol Hero selalu berada di lapisan paling atas agar bisa diklik
+  if (heroBtn) {
+    heroBtn.style.position = "relative";
+    heroBtn.style.zIndex = "5";
+  }
+
   function bukaHalaman(tabId, anchorId){
     pages.forEach(function(p){
       p.classList.toggle("aktif", p.id === tabId);
@@ -961,7 +1064,7 @@ var MAINT_TAB_NAME = "Sheet1";
     } else {
       heroTag.textContent = "INFORMASI KELAS X F";
       heroTitle.textContent = "Pantau kehadiran dan jadwal kelas kita";
-      heroDesc.textContent = "Data diperbarui otomatis setiap hari otomatis dari Google Form.";
+      heroDesc.textContent = "Data diperbarui otomatis setiap hari dari Google Form.";
       heroBtn.textContent = "Lihat presensi hari ini";
       heroBtn.setAttribute("href", "#guru");
     }
@@ -985,22 +1088,18 @@ var MAINT_TAB_NAME = "Sheet1";
     });
   });
 
-  heroBtn.addEventListener("click", function(e){
-    e.preventDefault();
-    var href = heroBtn.getAttribute("href");
-    if (href === "#struktur") {
-      bukaHalaman("page-profil", "#profil");
-    } else {
-      var target = document.querySelector(href);
-      if (target) target.scrollIntoView({behavior: "smooth"});
-    }
-  });
-
+  // Menangani semua tombol & kartu yang mengarah ke #struktur (termasuk tombol "Lihat struktur kelas")
   document.addEventListener("click", function(e){
-    var cardStruktur = e.target.closest('a[href="#struktur"]');
-    if (cardStruktur) {
+    var linkStruktur = e.target.closest('a[href="#struktur"]');
+    if (linkStruktur) {
       e.preventDefault();
-      bukaHalaman("page-profil", "#profil");
+      bukaHalaman("page-profil", "#struktur");
+      return;
+    }
+    if (e.target.closest("#heroBtn")) {
+      e.preventDefault();
+      var target = document.querySelector(heroBtn.getAttribute("href"));
+      if (target) target.scrollIntoView({behavior: "smooth"});
     }
   });
 })();

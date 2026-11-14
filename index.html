@@ -45,7 +45,7 @@ a{color:inherit}
 }
 @media (prefers-color-scheme:dark){.brand{color:#fff}}
 nav ul{list-style:none;margin:0;padding:0;display:flex;gap:22px;flex-wrap:wrap}
-nav a{text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+nav a{text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer}
 nav a:hover,nav a.on{color:var(--orange)}
 .heroText{text-align:center;padding:80px 0 0;position:relative}
 .ghost{position:absolute;left:0;right:0;top:34px;font-size:clamp(90px,19vw,200px);font-weight:900;letter-spacing:.04em;color:rgba(255,255,255,.1);line-height:1;pointer-events:none;user-select:none}
@@ -186,10 +186,12 @@ footer b{color:var(--gold)}
 .maint-refresh{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:12px 22px;font-weight:900;font-size:13px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:background .2s}
 .maint-refresh:hover{background:rgba(255,255,255,.22)}
 .maint-foot{margin-top:20px;font-size:12px;color:#8e9ab5}
+
 /* ===== ANIMASI FADE-IN SAAT SCROLL ===== */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
 .reveal.muncul{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
 /* ===== 2 FOTO BERDAMPINGAN DI KARTU PJ ===== */
 .pj .foto img{object-position:center 20%}
 .pj .foto-ganda{display:flex;justify-content:center;align-items:center;gap:10px;min-height:84px;margin:0 auto 10px}
@@ -198,6 +200,12 @@ footer b{color:var(--gold)}
   .pj .foto-ganda{gap:6px}
   .pj .foto-ganda .foto{width:60px;height:60px;font-size:18px}
 }
+
+/* ===== PEMISAH HALAMAN PRESENSI & PERKENALAN ===== */
+.halaman-view{display:none;animation:munculHalaman .45s ease}
+.halaman-view.aktif{display:block}
+@keyframes munculHalaman{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.profil-top{margin-top:-70px;position:relative;z-index:2}
 </style>
 </head>
 <body>
@@ -232,87 +240,97 @@ footer b{color:var(--gold)}
     <div class="navcard">
       <div class="brand">KELAS<span>.</span>X F</div>
       <nav aria-label="Menu utama"><ul>
-        <li><a href="#home" class="on">Beranda</a></li>
-        <li><a href="#guru">Presensi Guru</a></li>
-        <li><a href="#murid">Presensi Murid</a></li>
-        <li><a href="#jadwal">Jadwal Besok</a></li>
-        <li><a href="#struktur">Struktur</a></li>
+        <li><a href="#presensi" data-tab="page-presensi" class="on">Presensi &amp; Jadwal</a></li>
+        <li><a href="#guru" data-tab="page-presensi">Presensi Guru</a></li>
+        <li><a href="#murid" data-tab="page-presensi">Presensi Murid</a></li>
+        <li><a href="#jadwal" data-tab="page-presensi">Jadwal Besok</a></li>
+        <li><a href="#profil" data-tab="page-profil">Wali Kelas &amp; Pengurus</a></li>
       </ul></nav>
     </div>
     <div class="heroText">
       <div class="ghost" aria-hidden="true">X.F</div>
-      <small>INFORMASI KELAS X F</small>
-      <h1>Pantau kehadiran dan jadwal kelas kita</h1>
-      <p>Data diperbarui otomatis setiap hari otomatis dari Google Form.</p>
-      <a class="btn" href="#guru">Lihat presensi hari ini</a>
+      <small id="heroTag">INFORMASI KELAS X F</small>
+      <h1 id="heroTitle">Pantau kehadiran dan jadwal kelas kita</h1>
+      <p id="heroDesc">Data diperbarui otomatis setiap hari otomatis dari Google Form.</p>
+      <a class="btn" id="heroBtn" href="#guru">Lihat presensi hari ini</a>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-  <div class="sum" id="ringkasan"></div>
+  <!-- ============================================================
+       HALAMAN 1: PRESENSI & JADWAL PELAJARAN
+       ============================================================ -->
+  <div id="page-presensi" class="halaman-view aktif">
+    <div class="sum" id="ringkasan"></div>
 
-  <section id="guru">
-    <h2>Presensi Guru Hari Ini</h2>
-    <p class="sub" id="guruSub">Memuat jadwal dan presensi hari ini...</p>
-    <div class="panel scroll"><table>
-      <thead><tr><th>Jam</th><th>Mata pelajaran</th><th>Guru</th><th>Status</th></tr></thead>
-      <tbody id="guruBody"></tbody>
-    </table></div>
-  </section>
+    <section id="guru">
+      <h2>Presensi Guru Hari Ini</h2>
+      <p class="sub" id="guruSub">Memuat jadwal dan presensi hari ini...</p>
+      <div class="panel scroll"><table>
+        <thead><tr><th>Jam</th><th>Mata pelajaran</th><th>Guru</th><th>Status</th></tr></thead>
+        <tbody id="guruBody"></tbody>
+      </table></div>
+    </section>
 
-  <section id="murid">
-    <h2>Presensi Murid Hari Ini</h2>
-    <p class="sub" id="muridSub">Memuat data presensi murid...</p>
-    <div class="panel">
-      <div class="stats" id="muridStats"></div>
-      <div class="bar" aria-hidden="true"><i id="muridBar"></i></div>
-      <div class="absen" id="muridAbsen"></div>
-    </div>
-  </section>
-
-  <section id="laporan">
-    <h2>Laporan Presensi Harian</h2>
-    <p class="sub">Isi laporan kehadiran lewat formulir di bawah ini (otomatis tampil di web dalam ±1-5 menit).</p>
-    <div class="laporan-grid">
-      <div class="laporan">
-        <div>
-          <h3>Presensi Guru</h3>
-          <p>Formulir kehadiran guru pada jam pelajaran hari ini.</p>
-        </div>
-        <a class="btn-laporan" href="https://forms.gle/RhKv8nVYbYmuy4m56" target="_blank" rel="noopener noreferrer">Isi Presensi Guru</a>
+    <section id="murid">
+      <h2>Presensi Murid Hari Ini</h2>
+      <p class="sub" id="muridSub">Memuat data presensi murid...</p>
+      <div class="panel">
+        <div class="stats" id="muridStats"></div>
+        <div class="bar" aria-hidden="true"><i id="muridBar"></i></div>
+        <div class="absen" id="muridAbsen"></div>
       </div>
-      <div class="laporan">
-        <div>
-          <h3>Presensi Murid</h3>
-          <p>Formulir murid yang tidak hadir atau dispensasi hari ini.</p>
+    </section>
+
+    <section id="laporan">
+      <h2>Laporan Presensi Harian</h2>
+      <p class="sub">Isi laporan kehadiran lewat formulir di bawah ini (otomatis tampil di web dalam ±1-5 menit).</p>
+      <div class="laporan-grid">
+        <div class="laporan">
+          <div>
+            <h3>Presensi Guru</h3>
+            <p>Formulir kehadiran guru pada jam pelajaran hari ini.</p>
+          </div>
+          <a class="btn-laporan" href="https://forms.gle/RhKv8nVYbYmuy4m56" target="_blank" rel="noopener noreferrer">Isi Presensi Guru</a>
         </div>
-        <a class="btn-laporan" href="https://forms.gle/zueuB7R3ctjiQWYaA" target="_blank" rel="noopener noreferrer">Isi Presensi Murid</a>
+        <div class="laporan">
+          <div>
+            <h3>Presensi Murid</h3>
+            <p>Formulir murid yang tidak hadir atau dispensasi hari ini.</p>
+          </div>
+          <a class="btn-laporan" href="https://forms.gle/zueuB7R3ctjiQWYaA" target="_blank" rel="noopener noreferrer">Isi Presensi Murid</a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="jadwal">
-    <h2>Mata Pelajaran Besok</h2>
-    <p class="sub" id="jadwalSub"></p>
-    <div class="panel scroll"><table>
-      <thead><tr><th>Jam</th><th>Mata pelajaran</th><th>Guru</th></tr></thead>
-      <tbody id="jadwalBody"></tbody>
-    </table></div>
-  </section>
+    <section id="jadwal">
+      <h2>Mata Pelajaran Besok</h2>
+      <p class="sub" id="jadwalSub"></p>
+      <div class="panel scroll"><table>
+        <thead><tr><th>Jam</th><th>Mata pelajaran</th><th>Guru</th></tr></thead>
+        <tbody id="jadwalBody"></tbody>
+      </table></div>
+    </section>
+  </div>
 
-  <section id="struktur">
-    <h2>Struktur Organisasi Kelas</h2>
-    <p class="sub">Pengurus kelas dan anggota tiap divisi.</p>
-    <div id="strukturBox"></div>
-  </section>
+  <!-- ============================================================
+       HALAMAN 2: PERKENALAN WALI KELAS, PENGURUS INTI & PJ MAPEL
+       ============================================================ -->
+  <div id="page-profil" class="halaman-view">
+    <section id="struktur" class="profil-top">
+      <h2>Profil &amp; Struktur Organisasi Kelas</h2>
+      <p class="sub">Perkenalan wali kelas, pengurus inti, anggota divisi, dan PJ mata pelajaran.</p>
+      <div id="strukturBox"></div>
+    </section>
 
-  <section id="foto-bersama">
-    <figure class="bersama">
-      <img src="Foto-Bersama.jpg" alt="Foto bersama kelas X F" loading="lazy">
-    </figure>
-    <p class="slogan">#WERACEASONE</p>
-  </section>
+    <section id="foto-bersama">
+      <figure class="bersama">
+        <img src="Foto-Bersama.jpg" alt="Foto bersama kelas X F" loading="lazy">
+      </figure>
+      <p class="slogan">#WERACEASONE</p>
+    </section>
+  </div>
 </main>
 
 <footer>Develop by <b>Divisi Hubungan Masyarakat</b> &middot; &copy; <span id="thn"></span> Kelas X F</footer>
@@ -753,7 +771,6 @@ var PJ=[
       var teksNama = daftarNama.join(" & ");
       return '<div class="p"><span class="tag">PJ '+esc(x.mapel)+'</span>'+htmlFoto+'<b>'+esc(teksNama)+'</b></div>';
     }).join("")+'</div>');
-    
 })();
 
 /* ============================================================
@@ -887,9 +904,9 @@ var MAINT_TAB_NAME = "Sheet1";
     }, 250);
   });
 })();
+
 /* ===== ANIMASI FADE-IN OTOMATIS SAAT GULIR LAYAR ===== */
 (function(){
-  // Pilih semua elemen utama: kartu ringkasan, setiap section, panel, wali kelas, divisi, kartu pengurus, & foto bersama
   var targetSelector = "#ringkasan a, main section, .panel, .laporan, .wali, .divisi, .pj .p, .bersama, .slogan";
   var elemen = document.querySelectorAll(targetSelector);
 
@@ -899,21 +916,90 @@ var MAINT_TAB_NAME = "Sheet1";
     entries.forEach(function(entry){
       if (entry.isIntersecting) {
         entry.target.classList.add("muncul");
-        obs.unobserve(entry.target); // Animasi cukup berjalan 1x saat elemen mulai terlihat
+        obs.unobserve(entry.target);
       }
     });
   }, {
-    threshold: 0.12, // Mulai muncul saat 12% bagian elemen masuk ke layar
+    threshold: 0.12,
     rootMargin: "0px 0px -30px 0px"
   });
 
   elemen.forEach(function(el, i){
     el.classList.add("reveal");
-    // Beri sedikit jeda berurutan untuk kartu-kartu yang sejajar
     if (el.matches("#ringkasan a, .pj .p")) {
       el.style.transitionDelay = ((i % 4) * 0.08) + "s";
     }
     observer.observe(el);
+  });
+})();
+
+/* ===== NAVIGASI ANTAR HALAMAN (PRESENSI VS PROFIL PENGURUS) ===== */
+(function(){
+  var navLinks = document.querySelectorAll("nav a[data-tab]");
+  var pages = document.querySelectorAll(".halaman-view");
+  var heroTag = document.getElementById("heroTag");
+  var heroTitle = document.getElementById("heroTitle");
+  var heroDesc = document.getElementById("heroDesc");
+  var heroBtn = document.getElementById("heroBtn");
+
+  function bukaHalaman(tabId, anchorId){
+    pages.forEach(function(p){
+      p.classList.toggle("aktif", p.id === tabId);
+    });
+    navLinks.forEach(function(a){
+      var cocokTab = a.getAttribute("data-tab") === tabId;
+      var cocokHref = !anchorId || a.getAttribute("href") === anchorId;
+      a.classList.toggle("on", cocokTab && cocokHref);
+    });
+
+    if (tabId === "page-profil") {
+      heroTag.textContent = "STRUKTUR & PROFIL KELAS X F";
+      heroTitle.textContent = "Kenali Wali Kelas, Pengurus & PJ Mapel";
+      heroDesc.textContent = "Susunan kepengurusan kelas dan penanggung jawab mata pelajaran X F.";
+      heroBtn.textContent = "Lihat struktur kelas";
+      heroBtn.setAttribute("href", "#struktur");
+    } else {
+      heroTag.textContent = "INFORMASI KELAS X F";
+      heroTitle.textContent = "Pantau kehadiran dan jadwal kelas kita";
+      heroDesc.textContent = "Data diperbarui otomatis setiap hari otomatis dari Google Form.";
+      heroBtn.textContent = "Lihat presensi hari ini";
+      heroBtn.setAttribute("href", "#guru");
+    }
+
+    document.querySelectorAll("#" + tabId + " .reveal").forEach(function(el){
+      el.classList.add("muncul");
+    });
+
+    if (anchorId && anchorId !== "#presensi" && anchorId !== "#profil") {
+      var target = document.querySelector(anchorId);
+      if (target) target.scrollIntoView({behavior: "smooth"});
+    } else {
+      window.scrollTo({top: 0, behavior: "smooth"});
+    }
+  }
+
+  navLinks.forEach(function(link){
+    link.addEventListener("click", function(e){
+      e.preventDefault();
+      bukaHalaman(link.getAttribute("data-tab"), link.getAttribute("href"));
+    });
+  });
+
+  heroBtn.addEventListener("click", function(e){
+    var href = heroBtn.getAttribute("href");
+    var target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({behavior: "smooth"});
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    var cardStruktur = e.target.closest('a[href="#struktur"]');
+    if (cardStruktur) {
+      e.preventDefault();
+      bukaHalaman("page-profil", "#profil");
+    }
   });
 })();
 </script>
